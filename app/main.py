@@ -22,11 +22,10 @@ app = FastAPI()
 @app.post("/saisie/")
 async def saisie_donnees(donnees: dataEuro):
     list=donnees.getlist()
-    # if os.path.exists("mon_model.joblib"):
-    #     m=model.chargement()
-    # else:
-    #     m= model.entrainement()
-    m= model.entrainement()
+    if (os.path.exists('mon_model.joblib')):
+        m= model.chargement()
+    else:
+        m= model.entrainement()
     p= model.prediction(m, list)
 
     return {"p": p}
