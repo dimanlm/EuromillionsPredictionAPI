@@ -48,23 +48,24 @@ def feature_engineering():
     kmeans = KMeans(15).fit(X)
     X['Cluster'] = kmeans.labels_
 
-    return X, y
+    return X, y, kmeans
 
 def entrainement():
-    X, y  = feature_engineering()
+    X, y, clustering  = feature_engineering()
     X_train, X_test, y_train, y_test = train_test_split(X, y, shuffle = True, stratify=y)
     foret = RandomForestClassifier(oob_score=True).fit(X_train, y_train)
     dump(foret, 'mon_model.joblib')
 
-    return foret
+    return foret, clustering
 
-def prediction(model, chiffres):
-    return model.predict_proba([chiffres])
+def prediction(foret, clustering, chiffres):
+    cluster = clustering.predict([chiffres])[0]
+    return foret.predict_proba([chiffres] + [cluster])
 
 
 def chargement():
     if(os.path.exist('mon_model.joblib')):
         return load('mon_model.joblib')
     print("Pas de modèle sauvegardé")
-    
+
     return None
