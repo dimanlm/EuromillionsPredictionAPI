@@ -1,13 +1,11 @@
 import pandas as pd
-import matplotlib.pyplot as plt
-import seaborn as sns
 import numpy as np
 from sklearn.cluster import KMeans
 from sklearn.model_selection import train_test_split
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.metrics import accuracy_score
 
-data = pd.read_csv('data/EuroMillions_numbers.csv', sep = ";", parse_dates = True)
+data = pd.read_csv('../data/EuroMillions_numbers.csv', sep = ";", parse_dates = True)
 data = data.drop(['Winner',	'Gain', 'Date'], axis = 1)
 data['Winner'] = 1
 
@@ -16,12 +14,11 @@ def generation_data_perdante(nb):
     
     ligne_data = []
     for i in range(nb):
-        tmp = []
-        for j in range(5):
-            tmp.append(np.random.randint(1,50))
-        for j in range(2):
-            tmp.append(np.random.randint(1,11))
-        ligne_data.append(tmp)
+
+        a = np.random.choice(range(1,50),5, replace = False)
+        b = np.random.choice(range(1,11),2, replace = False)
+
+        ligne_data.append(list(a) + list(b))
     df = pd.DataFrame(ligne_data, columns=["N1","N2","N3","N4","N5","E1","E2"])
     df['Winner'] = 0
     return df
