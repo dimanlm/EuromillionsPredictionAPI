@@ -60,7 +60,8 @@ def entrainement():
 
 def prediction(foret, clustering, chiffres):
     cluster = clustering.predict([chiffres])[0]
-    return foret.predict_proba([chiffres] + [cluster])
+    print(cluster)
+    return foret.predict_proba([chiffres+ [cluster]])
 
 
 def chargement():

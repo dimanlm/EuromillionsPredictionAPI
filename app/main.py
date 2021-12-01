@@ -14,7 +14,7 @@ class dataEuro(BaseModel):
     e2: int
 
     def getlist(self):
-        return [self.n1,self.n2,self.n3,self.n4,self.n5,self.e1,self.e2, 1]
+        return [self.n1,self.n2,self.n3,self.n4,self.n5,self.e1,self.e2]
 
 
 app = FastAPI()
@@ -24,8 +24,9 @@ async def saisie_donnees(donnees: dataEuro):
     list=donnees.getlist()
     if (os.path.exists('mon_model.joblib')):
         m= model.chargement()
+        _, c = model.entrainement()
     else:
-        m= model.entrainement()
-    p= model.prediction(m, list)
+        m, c= model.entrainement()
+    p= model.prediction(m,c, list)
 
     return {"p": p}
