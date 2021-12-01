@@ -1,2 +1,3 @@
 *.ipynb
+*.joblib
 app/__pycache__/

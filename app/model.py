@@ -1,5 +1,7 @@
 import pandas as pd
 import numpy as np
+import os
+from joblib import dump, load
 from sklearn.cluster import KMeans
 from sklearn.model_selection import train_test_split
 from sklearn.ensemble import RandomForestClassifier
@@ -22,6 +24,7 @@ def generation_data_perdante(nb):
         ligne_data.append(list(a) + list(b))
     df = pd.DataFrame(ligne_data, columns=["N1","N2","N3","N4","N5","E1","E2"])
     df['Winner'] = 0
+
     return df
 
 
@@ -40,11 +43,28 @@ def creation_data():
     return (X, y)
 
 
-def entrainement():
+def feature_engineering():
     X,y = creation_data()
+    kmeans = KMeans(15).fit(X)
+    X['Cluster'] = kmeans.labels_
+
+    return X, y
+
+def entrainement():
+    X, y  = feature_engineering()
     X_train, X_test, y_train, y_test = train_test_split(X, y, shuffle = True, stratify=y)
     foret = RandomForestClassifier(oob_score=True).fit(X_train, y_train)
+    dump(foret, 'mon_model.joblib')
+
     return foret
 
 def prediction(model, chiffres):
     return model.predict_proba([chiffres])
+
+
+def chargement():
+    if(os.path.exist('mon_model.joblib')):
+        return load('mon_model.joblib')
+    print("Pas de modèle sauvegardé")
+    
+    return None
