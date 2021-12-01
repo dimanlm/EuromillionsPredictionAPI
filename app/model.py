@@ -64,7 +64,7 @@ def prediction(foret, clustering, chiffres):
 
 
 def chargement():
-    if(os.path.exist('mon_model.joblib')):
+    if(os.path.exists('mon_model.joblib')):
         return load('mon_model.joblib')
     print("Pas de modèle sauvegardé")
 
