@@ -5,6 +5,6 @@ API applied to AI
 
 TP noté - Architecture Microservice
 
-Group:
+Groupe:
 Dmytro Matsepa (Option ICC)
 Pierre Virgaux (Option IA)

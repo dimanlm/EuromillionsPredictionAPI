@@ -1,1 +1,2 @@
 *.ipynb
+app/__pycache__/
