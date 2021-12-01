@@ -40,8 +40,8 @@ def creation_data():
     return (X, y)
 
 
-def entrainement(X,y):
-    X,y = creation_data(chemin_fichier)
+def entrainement():
+    X,y = creation_data()
     X_train, X_test, y_train, y_test = train_test_split(X, y, shuffle = True, stratify=y)
     foret = RandomForestClassifier(oob_score=True).fit(X_train, y_train)
     return foret
