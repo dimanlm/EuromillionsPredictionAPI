@@ -1,5 +1,7 @@
 import pandas as pd
 import numpy as np
+import os
+from joblib import dump, load
 from sklearn.cluster import KMeans
 from sklearn.model_selection import train_test_split
 from sklearn.ensemble import RandomForestClassifier
@@ -40,11 +42,19 @@ def creation_data():
     return (X, y)
 
 
-def entrainement(X,y):
+def entrainement():
     X,y = creation_data(chemin_fichier)
     X_train, X_test, y_train, y_test = train_test_split(X, y, shuffle = True, stratify=y)
     foret = RandomForestClassifier(oob_score=True).fit(X_train, y_train)
+    dump(foret, 'mon_model.joblib')
     return foret
 
 def prediction(model, chiffres):
     return model.predict_proba([chiffres])
+
+
+def chargement():
+    if(os.path.exist('mon_model.joblib')):
+        return load('mon_model.joblib')
+    print("Pas de modèle sauvegardé")
+    return None
