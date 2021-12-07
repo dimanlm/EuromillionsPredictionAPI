@@ -22,7 +22,7 @@ app = FastAPI()
 @app.post("/predict/")
 async def getPrediction(donnees: dataEuro):
     list=donnees.getlist()
-    if (os.path.exists('mon_model.joblib')):
+    if (os.path.exists('model.joblib')):
         m= model.chargement()
         _, c = model.entrainement()
     else:
