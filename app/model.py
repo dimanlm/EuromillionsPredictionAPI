@@ -54,19 +54,15 @@ def entrainement():
     X, y, clustering  = feature_engineering()
     X_train, X_test, y_train, y_test = train_test_split(X, y, shuffle = True, stratify=y)
     foret = RandomForestClassifier(oob_score=True).fit(X_train, y_train)
-    dump(foret, 'mon_model.joblib')
+    dump(foret, 'model.joblib')
 
     return foret, clustering
 
 def prediction(foret, clustering, chiffres):
     cluster = clustering.predict([chiffres])[0]
-    print(cluster)
     return foret.predict_proba([chiffres+ [cluster]])
 
 
 def chargement():
     if(os.path.exists('mon_model.joblib')):
         return load('mon_model.joblib')
-    print("Pas de modèle sauvegardé")
-
-    return None

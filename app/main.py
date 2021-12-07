@@ -19,8 +19,8 @@ class dataEuro(BaseModel):
 
 app = FastAPI()
 
-@app.post("/saisie/")
-async def saisie_donnees(donnees: dataEuro):
+@app.post("/predict/")
+async def getPrediction(donnees: dataEuro):
     list=donnees.getlist()
     if (os.path.exists('mon_model.joblib')):
         m= model.chargement()
@@ -30,3 +30,13 @@ async def saisie_donnees(donnees: dataEuro):
     p= model.prediction(m,c, list)
 
     return {"p": p}
+
+@app.post("/train/")
+async def trainModel():
+    if (os.path.exists('model.joblib')):
+        m= model.chargement()
+        _, c = model.entrainement()
+        return {"model retrained"}
+    else:
+        m, c= model.entrainement()
+        return {"model trained for the first time"}

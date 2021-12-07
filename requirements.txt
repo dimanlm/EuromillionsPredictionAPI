@@ -1,4 +1,7 @@
 pandas
+numpy
 sklearn
+pydantic
 seaborn
 joblib
+os
