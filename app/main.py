@@ -22,9 +22,9 @@ app = FastAPI()
 @app.post("/predict/")
 async def getPrediction(donnees: dataEuro):
     list=donnees.getlist()
-    if (os.path.exists('model.joblib')):
-        m= model.chargement()
-        _, c = model.entrainement()
+    if os.path.exists('model.joblib') and os.path.exists('clustering.joblib'):
+        m, c= model.chargement()
+
     else:
         m, c= model.entrainement()
     p= model.prediction(m,c, list)
@@ -33,10 +33,10 @@ async def getPrediction(donnees: dataEuro):
 
 @app.post("/train/")
 async def trainModel():
-    if (os.path.exists('model.joblib')):
-        m= model.chargement()
-        _, c = model.entrainement()
+    if os.path.exists('model.joblib') and os.path.exists('clustering.joblib'):
+        m, c = model.entrainement()
         return {"model retrained"}
     else:
         m, c= model.entrainement()
         return {"model trained for the first time"}
+

@@ -29,7 +29,9 @@ def generation_data_perdante(nb):
 
 
 def creation_data():
-    "Permet la création du tableau de données"
+    '''
+    Permet la création du tableau de données et la mise en place d'un échantillonage introduisant des joueurs perdants
+    '''
 
     data = pd.read_csv(chemin_fichier, sep = ";")
     data = data.drop(['Winner',	'Gain', 'Date'], axis = 1)
@@ -44,6 +46,9 @@ def creation_data():
 
 
 def feature_engineering():
+    '''
+    Permet la mise en place de clustering 
+    '''
     X,y = creation_data()
     kmeans = KMeans(15).fit(X)
     X['Cluster'] = kmeans.labels_
@@ -55,14 +60,46 @@ def entrainement():
     X_train, X_test, y_train, y_test = train_test_split(X, y, shuffle = True, stratify=y)
     foret = RandomForestClassifier(oob_score=True).fit(X_train, y_train)
     dump(foret, 'model.joblib')
-
+    dump(clustering, 'clustering.joblib')
     return foret, clustering
 
 def prediction(foret, clustering, chiffres):
+
     cluster = clustering.predict([chiffres])[0]
     return foret.predict_proba([chiffres+ [cluster]])
 
 
 def chargement():
-    if(os.path.exists('model.joblib')):
-        return load('model.joblib')
+
+    '''
+    Permet le chargement des 2 modèles permettant la prédiction
+    '''
+    if os.path.exists('model.joblib') and os.path.exists('clustering.joblib'):
+        return (load('model.joblib'), load('clustering.joblib'))
+
+
+def description(foret, clustering):
+
+    '''
+    Décrit les 2 modèles permettant les prédictions
+    '''
+    dico_foret = foret.get_params()
+    dico_foret['metric accuracy'] = 'Accuracy standard'
+    dico_foret['description'] = 'Ceci est une description des paramètres de la foret aléatoire.'
+    dico_clustering = clustering.get_params()
+    dico_clustering['description'] = 'Ceci est une description des paramètres de l\'algorithme des kmeans.'
+
+    return (foret.get_params(), clustering.get_params())
+
+
+
+def generation_chiffres(foret, clustering):
+
+    '''
+    Permet de générer une combinaison qui a plus de chance de gagner que les autres.
+    '''
+
+    combinaisons = generation_data_perdante(10)[["N1","N2","N3","N4","N5","E1","E2"]]
+    combinaisons['Cluster'] = clustering.predict(combinaisons)
+    probas = foret.predict_proba(combinaisons)
+    return combinaisons.loc[np.argmax(probas[:,1])].to_dict()
