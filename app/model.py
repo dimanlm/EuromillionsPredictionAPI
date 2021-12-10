@@ -28,10 +28,13 @@ def generation_data_perdante(nb):
     return df
 
 
-def creation_data():
+def creation_data(original_modif = False):
     '''
     Permet la création du tableau de données et la mise en place d'un échantillonage introduisant des joueurs perdants
     '''
+
+    if original_modif :
+        return pd.read_csv(chemin_fichier, sep = ";")
 
     data = pd.read_csv(chemin_fichier, sep = ";")
     data = data.drop(['Winner',	'Gain', 'Date'], axis = 1)
@@ -106,3 +109,12 @@ def generation_chiffres(foret, clustering):
     combinaisons['Cluster'] = clustering.predict(combinaisons)
     probas = foret.predict_proba(combinaisons)
     return combinaisons.loc[np.argmax(probas[:,1])].to_dict()
+
+
+def ajout_et_entrainement(new_data):
+    ligne_ajout = pd.DataFrame.from_dict(new_data, orient='index').T
+    original = creation_data(original_modif = True)
+    
+    pd.concat([original, ligne_ajout]).to_csv('../data/EuroMillions_numbers.csv',index = False)
+
+    return "Donnée ajoutée"
