@@ -73,4 +73,4 @@ async def getModelDetails():
 
 @app.put("/api/createdata/{newdataId}")
 async def createNewData(data: newDataEuro):
-    return {**data.dict()}
+    return {model.ajout_et_entrainement(**data.dict())}
