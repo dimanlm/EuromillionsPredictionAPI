@@ -31,7 +31,7 @@ async def getPrediction(donnees: dataEuro):
     p= model.prediction(m,c, list)
     return {"p": p}
 
-@app.post("/train/")
+@app.post("/api/train/")
 async def trainModel():
     if os.path.exists('model.joblib') and os.path.exists('clustering.joblib'):
         m_foret, c = model.entrainement()
@@ -40,10 +40,19 @@ async def trainModel():
         m, c= model.entrainement()
         return {"model trained for the first time"}
 
-@app.get("/predict/")
+@app.get("/api/predict/")
 async def getMyPredict():
     if os.path.exists('model.joblib') and os.path.exists('clustering.joblib'):
         m, c= model.chargement()
         return{"pred": model.generation_chiffres(m,c)}
-    else:
-        return{"msg": "You need to train your model first"}
+
+    return{"error": "You need to train your model first"}
+
+
+@app.get("/api/model")
+async def getModelDetails():
+    if os.path.exists('model.joblib') and os.path.exists('clustering.joblib'):
+        m, c= model.chargement()
+        return{"pred": model.description(m,c)}
+
+    return{"error": "You need to train your model first"}
