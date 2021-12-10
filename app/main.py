@@ -1,3 +1,4 @@
+from datetime import datetime
 from fastapi import FastAPI
 from pydantic import BaseModel
 import model
@@ -15,6 +16,18 @@ class dataEuro(BaseModel):
 
     def getlist(self):
         return [self.n1,self.n2,self.n3,self.n4,self.n5,self.e1,self.e2]
+
+class newDataEuro(BaseModel):
+    Date: str
+    N1: int
+    N2: int
+    N3: int
+    N4: int
+    N5: int
+    E1: int
+    E2: int
+    Winner: int
+    Gain: int
 
 
 app = FastAPI()
@@ -56,3 +69,8 @@ async def getModelDetails():
         return{"pred": model.description(m,c)}
 
     return{"error": "You need to train your model first"}
+
+
+@app.put("/api/createdata/{newdataId}")
+async def createNewData(data: newDataEuro):
+    return {**data.dict()}
