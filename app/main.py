@@ -25,18 +25,16 @@ async def getPrediction(donnees: dataEuro):
     if (os.path.exists('model.joblib')):
         m= model.chargement()
         _, c = model.entrainement()
+        msg = {"model.joblib loaded"}
     else:
         m, c= model.entrainement()
-    p= model.prediction(m,c, list)
+        msg = "model.joblib not found. The model has been trained"
 
-    return {"p": p}
+    p= model.prediction(m,c, list)
+    return {"p": p, "msg": msg }
+
 
 @app.post("/train/")
 async def trainModel():
-    if (os.path.exists('model.joblib')):
-        m= model.chargement()
-        _, c = model.entrainement()
-        return {"model retrained"}
-    else:
-        m, c= model.entrainement()
-        return {"model trained for the first time"}
+    m, c = model.entrainement()
+    return {"m": 'model.joblib'}

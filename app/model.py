@@ -50,6 +50,7 @@ def feature_engineering():
 
     return X, y, kmeans
 
+
 def entrainement():
     X, y, clustering  = feature_engineering()
     X_train, X_test, y_train, y_test = train_test_split(X, y, shuffle = True, stratify=y)
@@ -58,8 +59,10 @@ def entrainement():
 
     return foret, clustering
 
+
 def prediction(foret, clustering, chiffres):
     cluster = clustering.predict([chiffres])[0]
+    foret.predict_proba([chiffres+ [cluster]])
     return foret.predict_proba([chiffres+ [cluster]])
 
 
