@@ -38,9 +38,7 @@ async def getPrediction(donnees: dataEuro):
     if os.path.exists('model.joblib') and os.path.exists('clustering.joblib'):
         m, c= model.chargement() # m_foret, c_cluster
     else:
-        m, c= model.entrainement()
-        #msg = "model.joblib not found. The model has been trained"
-
+        return{"Train the model first please."}
     p= model.prediction(m,c, list)
     return {"p": p}
 
@@ -57,7 +55,7 @@ async def trainModel():
 async def getMyPredict():
     if os.path.exists('model.joblib') and os.path.exists('clustering.joblib'):
         m, c= model.chargement()
-        return{"pred": model.generation_chiffres(m,c)}
+        return{"pred": model.generationChiffres(m,c)}
 
     return{"error": "You need to train your model first"}
 
@@ -73,4 +71,6 @@ async def getModelDetails():
 
 @app.put("/api/createdata/{newdataId}")
 async def createNewData(data: newDataEuro):
-    return {model.ajout_et_entrainement(**data.dict())}
+    print(model.ajoutEtEntrainement(data.dict()))
+    model.entrainement()
+    return {"model trained with the new data"}

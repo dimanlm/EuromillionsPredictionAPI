@@ -7,9 +7,9 @@ from sklearn.model_selection import train_test_split
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.metrics import accuracy_score
 
-chemin_fichier = "../data/EuroMillions_numbers.csv"
+PATH_TO_DATA_FILE = "../data/EuroMillions_numbers.csv"
 
-def generation_data_perdante(nb):
+def generationDataPerdante(nb):
     '''
     Permet la génération de donnée perdante au loto pour un future entraînement.Le tirage est aléatoire et sans remise
 
@@ -28,19 +28,19 @@ def generation_data_perdante(nb):
     return df
 
 
-def creation_data(original_modif = False):
+def creationData(original_modif = False):
     '''
     Permet la création du tableau de données et la mise en place d'un échantillonage introduisant des joueurs perdants
     '''
 
     if original_modif :
-        return pd.read_csv(chemin_fichier, sep = ";")
+        return pd.read_csv(PATH_TO_DATA_FILE, sep = ";")
 
-    data = pd.read_csv(chemin_fichier, sep = ";")
+    data = pd.read_csv(PATH_TO_DATA_FILE, sep = ";")
     data = data.drop(['Winner',	'Gain', 'Date'], axis = 1)
     data['Winner'] = 1
 
-    data_perdu = generation_data_perdante(8 * data.shape[0])
+    data_perdu = generationDataPerdante(8 * data.shape[0])
     data_complete = pd.concat([data, data_perdu])
     X = data_complete.drop('Winner', axis = 1)
     y = data_complete['Winner']
@@ -48,11 +48,11 @@ def creation_data(original_modif = False):
     return (X, y)
 
 
-def feature_engineering():
+def featureEngineering():
     '''
     Permet la mise en place de clustering 
     '''
-    X,y = creation_data()
+    X,y = creationData()
     kmeans = KMeans(15).fit(X)
     X['Cluster'] = kmeans.labels_
 
@@ -60,7 +60,7 @@ def feature_engineering():
 
 
 def entrainement():
-    X, y, clustering  = feature_engineering()
+    X, y, clustering  = featureEngineering()
     X_train, X_test, y_train, y_test = train_test_split(X, y, shuffle = True, stratify=y)
     foret = RandomForestClassifier(oob_score=True).fit(X_train, y_train)
     dump(foret, 'model.joblib')
@@ -99,22 +99,22 @@ def description(foret, clustering):
 
 
 
-def generation_chiffres(foret, clustering):
+def generationChiffres(foret, clustering):
 
     '''
     Permet de générer une combinaison qui a plus de chance de gagner que les autres.
     '''
 
-    combinaisons = generation_data_perdante(10)[["N1","N2","N3","N4","N5","E1","E2"]]
+    combinaisons = generationDataPerdante(10)[["N1","N2","N3","N4","N5","E1","E2"]]
     combinaisons['Cluster'] = clustering.predict(combinaisons)
     probas = foret.predict_proba(combinaisons)
     return combinaisons.loc[np.argmax(probas[:,1])].to_dict()
 
 
-def ajout_et_entrainement(new_data):
+def ajoutEtEntrainement(new_data):
     ligne_ajout = pd.DataFrame.from_dict(new_data, orient='index').T
-    original = creation_data(original_modif = True)
+    original = creationData(original_modif = True)
     
-    pd.concat([original, ligne_ajout]).to_csv('../data/EuroMillions_numbers.csv',index = False)
+    pd.concat([original, ligne_ajout]).to_csv(PATH_TO_DATA_FILE,index = False)
 
     return "Donnée ajoutée"

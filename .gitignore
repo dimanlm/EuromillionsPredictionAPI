@@ -1,3 +1,4 @@
 *.ipynb
 *.joblib
+*.csv
 app/__pycache__/
