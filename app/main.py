@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import date
 from fastapi import FastAPI
 from pydantic import BaseModel
 import model
@@ -18,7 +18,7 @@ class dataEuro(BaseModel):
         return [self.n1,self.n2,self.n3,self.n4,self.n5,self.e1,self.e2]
 
 class newDataEuro(BaseModel):
-    Date: str
+    Date: date 
     N1: int
     N2: int
     N3: int
@@ -33,26 +33,26 @@ class newDataEuro(BaseModel):
 app = FastAPI()
 
 @app.post("/api/predict/")
-async def getPrediction(donnees: dataEuro):
+async def predictTheResultOfInputData(donnees: dataEuro):
     list=donnees.getlist()
     if os.path.exists('model.joblib') and os.path.exists('clustering.joblib'):
-        m, c= model.chargement() # m_foret, c_cluster
+        m, c= model.chargement() # m => forest, c => cluster
     else:
         return{"Train the model first please."}
     p= model.prediction(m,c, list)
     return {"p": p}
 
-@app.post("/api/train/")
+@app.post("/api/model/retrain/")
 async def trainModel():
     if os.path.exists('model.joblib') and os.path.exists('clustering.joblib'):
-        m_foret, c = model.entrainement()
+        model.entrainement()
         return {"model retrained"}
     else:
-        m, c= model.entrainement()
+        model.entrainement()
         return {"model trained for the first time"}
 
 @app.get("/api/predict/")
-async def getMyPredict():
+async def getMyWinningCombo():
     if os.path.exists('model.joblib') and os.path.exists('clustering.joblib'):
         m, c= model.chargement()
         return{"pred": model.generationChiffres(m,c)}
@@ -69,8 +69,16 @@ async def getModelDetails():
     return{"error": "You need to train your model first"}
 
 
-@app.put("/api/createdata/{newdataId}")
-async def createNewData(data: newDataEuro):
-    print(model.ajoutEtEntrainement(data.dict()))
-    model.entrainement()
-    return {"model trained with the new data"}
+@app.put("/api/createdata/{train_model_choise}")
+async def createNewData(data: newDataEuro, train_model_choise: bool):
+    model.ajoutDonnees(data.dict())
+    if (train_model_choise):
+        model.entrainement()
+        msg = "The model has been trained with the new data"
+    else:
+        msg = "New data has been added. You can use '/api/model/retrain/' to update the model"
+
+    return {
+        'train?' : train_model_choise,
+        'msg': msg
+        }

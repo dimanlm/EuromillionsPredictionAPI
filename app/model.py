@@ -111,10 +111,10 @@ def generationChiffres(foret, clustering):
     return combinaisons.loc[np.argmax(probas[:,1])].to_dict()
 
 
-def ajoutEtEntrainement(new_data):
+def ajoutDonnees(new_data):
     ligne_ajout = pd.DataFrame.from_dict(new_data, orient='index').T
     original = creationData(original_modif = True)
     
-    pd.concat([original, ligne_ajout]).to_csv(PATH_TO_DATA_FILE,index = False)
+    pd.concat([original, ligne_ajout]).to_csv(PATH_TO_DATA_FILE,index = False, sep = ';')
 
     return "Donnée ajoutée"
