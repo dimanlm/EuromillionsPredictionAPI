@@ -54,7 +54,7 @@ async def getModelDetails():
         m, c= learnmodel.chargement()
         return{"model_details": learnmodel.description(m,c)}
 
-    return{"error": "You need to train your model first"}
+    return{"error": TRAIN_THE_MODEL_MSG}
 
 
 @router.put("/{train_model_choise}")

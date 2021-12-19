@@ -31,7 +31,7 @@ async def predictTheResultOfInputData(donnees: dataEuro):
     if os.path.exists(GENERATED_MODEL) and os.path.exists(GENERATED_CLUSTER):
         m, c= learnmodel.chargement() # m => forest, c => cluster
     else:
-        return{"Train the model first please."}
+        return{'error': TRAIN_THE_MODEL_MSG}
     p= learnmodel.prediction(m,c, list)
     return {"Proba_perte": f"{p[0][0]*100}%",
             "Proba_gain" : f"{p[0][1]*100}%"}
@@ -42,5 +42,5 @@ async def getMyWinningCombo():
         m, c= learnmodel.chargement()
         return{"winning_combo": learnmodel.generationChiffres(m,c)}
 
-    return{"error": "You need to train your model first"}
+    return{"error": TRAIN_THE_MODEL_MSG}
 

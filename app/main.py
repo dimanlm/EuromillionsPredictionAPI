@@ -3,7 +3,6 @@ from pydantic import BaseModel
 import learnmodel
 import os
 import pandas as pd
-from varfile import *
 from api import predict, model
 # varfile contains the paths to different files
 # such as .csv data file, or .joblib files
