@@ -45,3 +45,12 @@ Once you execute the **uvicorn** command above in the **/TPEuromil/app** folder,
 * **PUT /api/model**: it is used to enrich the model with additional data. Additional data must have the same format as the rest of the data.
   * The {train_model_choise} is a boolean that allows you to choose if you either want or not to retrain the model with the new data.
   * N values must be in range [0,50] and the E values in [0,12]. An error message will be displayed returned.
+
+
+## Pytests
+
+```console
+$ cd test
+$ pytest
+```
+Once you execute the **uvicorn** command above in the **/TPEuromil/app** folder, you can go to **http://127.0.0.1:8000/docs** on your browser and try the different requests.
