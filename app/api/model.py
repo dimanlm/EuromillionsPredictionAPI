@@ -27,10 +27,10 @@ class newDataEuro(BaseModel):
         suiteE = [self.E1, self.E2]
         for i in range(len(suiteN)):
             if (0>suiteN[i] or suiteN[i]>50):
-                raise ValueError("Suite value must be [0,50]")
+                raise ValueError()
         for j in range(len(suiteE)):
             if (0>suiteE[j] or suiteE[j]>12):
-                raise ValueError("Etoile value must be [0,12]")
+                raise ValueError()
 
 
 
@@ -64,8 +64,7 @@ async def createNewData(data: newDataEuro, train_model_choise: bool):
     try:
         data.isValidSuites()
     except ValueError:
-        msg = "Invalid data. N values must be [0,50] and E must be [0,12]"
-        return{"msg": msg}
+        return{"msg": INVALID_DATA_MSG}
     
     # if the input is valid, we add the values to the csv data file
     learnmodel.ajoutDonnees(data.dict())
