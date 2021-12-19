@@ -40,7 +40,8 @@ async def predictTheResultOfInputData(donnees: dataEuro):
     else:
         return{"Train the model first please."}
     p= model.prediction(m,c, list)
-    return {"p": p}
+    return {"Proba_perte": f"{p[0][0]*100}%",
+            "Proba_gain" : f"{p[0][1]*100}%"}
 
 @app.post("/api/model/retrain/")
 async def trainModel():
@@ -74,7 +75,7 @@ async def createNewData(data: newDataEuro, train_model_choise: bool):
     model.ajoutDonnees(data.dict())
     if (train_model_choise):
         model.entrainement()
-        msg = "The model has been trained with the new data"
+        msg = "The model has been retrained with the new data"
     else:
         msg = "New data has been added. You can use '/api/model/retrain/' to update the model"
 
