@@ -110,6 +110,9 @@ def generationChiffres(foret, clustering):
 
 
 def ajoutDonnees(new_data):
+    '''
+    Allows to add new data to the csv data file.
+    '''
     ligne_ajout = pd.DataFrame.from_dict(new_data, orient='index').T
     original = creationData(original_modif = True)
     
