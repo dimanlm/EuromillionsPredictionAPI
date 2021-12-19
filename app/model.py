@@ -1,13 +1,13 @@
 import pandas as pd
 import numpy as np
 import os
+from varfile import *
 from joblib import dump, load
 from sklearn.cluster import KMeans
 from sklearn.model_selection import train_test_split
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.metrics import accuracy_score
 
-PATH_TO_DATA_FILE = "../data/EuroMillions_numbers.csv"
 
 def generationDataPerdante(nb):
     '''
@@ -63,8 +63,8 @@ def entrainement():
     X, y, clustering  = featureEngineering()
     X_train, X_test, y_train, y_test = train_test_split(X, y, shuffle = True, stratify=y)
     foret = RandomForestClassifier(oob_score=True).fit(X_train, y_train)
-    dump(foret, 'model.joblib')
-    dump(clustering, 'clustering.joblib')
+    dump(foret, GENERATED_MODEL)
+    dump(clustering, GENERATED_CLUSTER)
     return foret, clustering
 
 
@@ -79,8 +79,8 @@ def chargement():
     '''
     Permet le chargement des 2 modèles permettant la prédiction
     '''
-    if os.path.exists('model.joblib') and os.path.exists('clustering.joblib'):
-        return (load('model.joblib'), load('clustering.joblib'))
+    if os.path.exists(GENERATED_MODEL) and os.path.exists(GENERATED_CLUSTER):
+        return (load(GENERATED_MODEL), load(GENERATED_CLUSTER))
 
 
 def description(foret, clustering):

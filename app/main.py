@@ -4,6 +4,9 @@ from pydantic import BaseModel
 import model
 import os
 import pandas as pd
+from varfile import *
+# varfile contains the paths to different files
+# such as .csv data file, or .joblib files
 
 class dataEuro(BaseModel):
     n1: int
@@ -35,7 +38,7 @@ app = FastAPI()
 @app.post("/api/predict/")
 async def predictTheResultOfInputData(donnees: dataEuro):
     list=donnees.getlist()
-    if os.path.exists('model.joblib') and os.path.exists('clustering.joblib'):
+    if os.path.exists(GENERATED_MODEL) and os.path.exists(GENERATED_CLUSTER):
         m, c= model.chargement() # m => forest, c => cluster
     else:
         return{"Train the model first please."}
@@ -45,7 +48,7 @@ async def predictTheResultOfInputData(donnees: dataEuro):
 
 @app.post("/api/model/retrain/")
 async def trainModel():
-    if os.path.exists('model.joblib') and os.path.exists('clustering.joblib'):
+    if os.path.exists(GENERATED_MODEL) and os.path.exists(GENERATED_CLUSTER):
         model.entrainement()
         return {"model retrained"}
     else:
@@ -54,18 +57,18 @@ async def trainModel():
 
 @app.get("/api/predict/")
 async def getMyWinningCombo():
-    if os.path.exists('model.joblib') and os.path.exists('clustering.joblib'):
+    if os.path.exists(GENERATED_MODEL) and os.path.exists(GENERATED_CLUSTER):
         m, c= model.chargement()
-        return{"pred": model.generationChiffres(m,c)}
+        return{"winning_combo": model.generationChiffres(m,c)}
 
     return{"error": "You need to train your model first"}
 
 
 @app.get("/api/model")
 async def getModelDetails():
-    if os.path.exists('model.joblib') and os.path.exists('clustering.joblib'):
+    if os.path.exists(GENERATED_MODEL) and os.path.exists(GENERATED_CLUSTER):
         m, c= model.chargement()
-        return{"pred": model.description(m,c)}
+        return{"model_details": model.description(m,c)}
 
     return{"error": "You need to train your model first"}
 
