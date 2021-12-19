@@ -28,6 +28,7 @@ router = APIRouter(
 @router.post("/")
 async def predictTheResultOfInputData(donnees: dataEuro):
     list=donnees.getlist()
+    # checking if the model is already trained
     if os.path.exists(GENERATED_MODEL) and os.path.exists(GENERATED_CLUSTER):
         m, c= learnmodel.chargement() # m => forest, c => cluster
     else:

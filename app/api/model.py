@@ -40,6 +40,7 @@ router = APIRouter(
 
 @router.post("/retrain")
 async def trainModel():
+    # checking if the model is already trained
     if os.path.exists(GENERATED_MODEL) and os.path.exists(GENERATED_CLUSTER):
         learnmodel.entrainement()
         return {"model retrained"}
@@ -59,13 +60,14 @@ async def getModelDetails():
 
 @router.put("/{train_model_choise}")
 async def createNewData(data: newDataEuro, train_model_choise: bool):
-    # check if the input is correct: N = [0,50] and E = [0,12]
+    # check if the input is valid: N = [0,50] and E = [0,12]
     try:
         data.isValidSuites()
     except ValueError:
         msg = "Invalid data. N values must be [0,50] and E must be [0,12]"
         return{"msg": msg}
     
+    # if the input is valid, we add the values to the csv data file
     learnmodel.ajoutDonnees(data.dict())
     
     if train_model_choise:
