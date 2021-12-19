@@ -86,7 +86,7 @@ async def getModelDetails():
     return{"error": "You need to train your model first"}
 
 
-@app.put("/api/createdata/{train_model_choise}")
+@app.put("/api/model/{train_model_choise}")
 async def createNewData(data: newDataEuro, train_model_choise: bool):
     # check if the input is correct: N = [0,50] and E = [0,12]
     try:
@@ -106,4 +106,4 @@ async def createNewData(data: newDataEuro, train_model_choise: bool):
     return {
         'train?' : train_model_choise,
         'msg': msg,
-        }
+    }

@@ -1,7 +1,8 @@
 pandas
 numpy
 sklearn
+uvicorn
+fastapi
 pydantic
 seaborn
 joblib
-os
