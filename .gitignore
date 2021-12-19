@@ -3,3 +3,4 @@
 *.csv
 app/__pycache__/
 app/api/__pycache__
+test/__pycache__/
