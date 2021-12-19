@@ -75,7 +75,6 @@ def prediction(foret, clustering, chiffres):
 
 
 def chargement():
-
     '''
     Permet le chargement des 2 modèles permettant la prédiction
     '''

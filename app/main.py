@@ -32,6 +32,17 @@ class newDataEuro(BaseModel):
     Winner: int
     Gain: int
 
+    
+    def isValidSuites(self):
+        suiteN = [self.N1, self.N2, self.N3, self.N4, self.N5]
+        suiteE = [self.E1, self.E2]
+        for i in range(len(suiteN)):
+            if (0>suiteN[i] or suiteN[i]>50):
+                raise ValueError("Suite value must be [0,50]")
+        for j in range(len(suiteE)):
+            if (0>suiteE[j] or suiteE[j]>12):
+                raise ValueError("Etoile value must be [0,12]")
+
 
 app = FastAPI()
 
@@ -46,6 +57,7 @@ async def predictTheResultOfInputData(donnees: dataEuro):
     return {"Proba_perte": f"{p[0][0]*100}%",
             "Proba_gain" : f"{p[0][1]*100}%"}
 
+
 @app.post("/api/model/retrain/")
 async def trainModel():
     if os.path.exists(GENERATED_MODEL) and os.path.exists(GENERATED_CLUSTER):
@@ -54,6 +66,7 @@ async def trainModel():
     else:
         model.entrainement()
         return {"model trained for the first time"}
+
 
 @app.get("/api/predict/")
 async def getMyWinningCombo():
@@ -75,14 +88,22 @@ async def getModelDetails():
 
 @app.put("/api/createdata/{train_model_choise}")
 async def createNewData(data: newDataEuro, train_model_choise: bool):
+    # check if the input is correct: N = [0,50] and E = [0,12]
+    try:
+        data.isValidSuites()
+    except ValueError:
+        msg = "Invalid data. N values must be [0,50] and E must be [0,12]"
+        return{"msg": msg}
+    
     model.ajoutDonnees(data.dict())
-    if (train_model_choise):
+    
+    if train_model_choise:
         model.entrainement()
         msg = "The model has been retrained with the new data"
     else:
         msg = "New data has been added. You can use '/api/model/retrain/' to update the model"
-
+    
     return {
         'train?' : train_model_choise,
-        'msg': msg
+        'msg': msg,
         }
